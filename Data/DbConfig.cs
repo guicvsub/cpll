@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.UserSecrets;
 
 
@@ -21,10 +15,17 @@ namespace cpll.Data
                 .Build();
         }
 
-        public string Server => "localhost";
+        public string Server => _config["server"] ?? "localhost";
         public string Database => _config["database"] ?? string.Empty;
         public string User => _config["user"] ?? string.Empty;
         public string Password => _config["password"] ?? string.Empty;
-        public uint Port => uint.Parse(_config["Port"] ?? "3306");
+        public uint Port
+        {
+            get
+            {
+                string? portValue = _config["port"] ?? _config["Port"];
+                return uint.TryParse(portValue, out uint port) ? port : 3306;
+            }
+        }
     }
 }

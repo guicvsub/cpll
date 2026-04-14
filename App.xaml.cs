@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
 using cpll.Data;
 using MySqlConnector;
 
@@ -14,12 +12,17 @@ namespace cpll
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            TestarConexao();
+            if (!TestarConexao())
+            {
+                Shutdown();
+                return;
+            }
+
             var window = new Views.MainWindowHost();
             window.Show();
         }
 
-        private void TestarConexao()
+        private bool TestarConexao()
         {
             try
             {
@@ -28,12 +31,18 @@ namespace cpll
                 using (MySqlConnection conn = factory.CreateConnection())
                 {
                     conn.Open();
-                    MessageBox.Show("✅ Conectou no banco!");
+                    return true;
                 }
             }
             catch (MySqlException ex)
             {
-                MessageBox.Show("❌ Erro ao conectar: " + ex.Message);
+                MessageBox.Show(
+                    "Não foi possível conectar ao banco de dados.\n\n" +
+                    $"Detalhes: {ex.Message}",
+                    "Falha de conexão",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return false;
             }
         }
     }

@@ -18,9 +18,10 @@ namespace cpll.Views
         {
             try
             {
-                string nome = TxtNome.Text;
-                string email = TxtEmail.Text;
-                int idade = int.Parse(TxtIdade.Text);
+                if (!TryGetDadosFormulario(out string nome, out string email, out int idade))
+                {
+                    return;
+                }
 
                 _controller.Criar(nome, email, idade);
 
@@ -45,9 +46,10 @@ namespace cpll.Views
                     return;
                 }
 
-                string nome = TxtNome.Text;
-                string email = TxtEmail.Text;
-                int idade = int.Parse(TxtIdade.Text);
+                if (!TryGetDadosFormulario(out string nome, out string email, out int idade))
+                {
+                    return;
+                }
 
                 _controller.Atualizar(selecionado.Id, nome, email, idade);
 
@@ -120,6 +122,36 @@ namespace cpll.Views
         {
             GridAlunos.ItemsSource = null;
             GridAlunos.ItemsSource = _controller.Listar();
+        }
+
+        private bool TryGetDadosFormulario(out string nome, out string email, out int idade)
+        {
+            nome = TxtNome.Text.Trim();
+            email = TxtEmail.Text.Trim();
+            idade = 0;
+
+            if (string.IsNullOrWhiteSpace(nome))
+            {
+                MessageBox.Show("Informe o nome do aluno.");
+                TxtNome.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
+            {
+                MessageBox.Show("Informe um e-mail válido.");
+                TxtEmail.Focus();
+                return false;
+            }
+
+            if (!int.TryParse(TxtIdade.Text, out idade) || idade < 0)
+            {
+                MessageBox.Show("Informe uma idade válida (número inteiro maior ou igual a 0).");
+                TxtIdade.Focus();
+                return false;
+            }
+
+            return true;
         }
     }
 }
