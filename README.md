@@ -11,18 +11,18 @@ Aplicação desktop **.NET 8** (WPF) que se conecta ao **MySQL** para cadastrar,
 | Item | Valor |
 |------|--------|
 | **SGBD** | MySQL |
-| **Nome do banco** | Definido por você (ex.: `cpll_db`) — deve ser o mesmo configurado nos *user secrets* (chave `database`). |
+| **Nome do banco** | **`escola`** — o nome usado no MySQL deve ser o **mesmo** valor que você gravar nos *user secrets* na chave **`database`** (veja seção abaixo). |
 | **Tabela** | `alunos` |
 
 Colunas usadas pelo projeto: `id` (auto incremento), `nome`, `email`, `idade`.
 
-Exemplo de criação:
+Exemplo de criação do banco **`escola`** e da tabela:
 
 ```sql
-CREATE DATABASE IF NOT EXISTS cpll_db
+CREATE DATABASE IF NOT EXISTS escola
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE cpll_db;
+USE escola;
 
 CREATE TABLE alunos (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -34,26 +34,26 @@ CREATE TABLE alunos (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
-(Ajuste `cpll_db` para o nome do banco que você for usar.)
-
 ---
 
 ## Pré-requisitos
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
 - Servidor **MySQL** em execução (ex.: localhost)
-- Banco e tabela criados conforme acima
+- Banco **`escola`** e tabela **`alunos`** criados conforme o script acima
 
 ---
 
 ## Credenciais (User Secrets)
 
+O **nome do banco de dados** não fica no código-fonte: ele é informado pelo **User Secret** com a chave **`database`**.
+
 O projeto lê usuário, senha, nome do banco e porta via **User Secrets** (não commitar senha no repositório). O servidor está fixo em código como `localhost`; o restante vem das chaves abaixo.
 
-Na pasta do projeto (`cpll`), execute:
+Na pasta do projeto (`cpll`), execute (exemplo usando o banco **`escola`**):
 
 ```bash
-dotnet user-secrets set "database" "cpll_db"
+dotnet user-secrets set "database" "escola"
 dotnet user-secrets set "user" "seu_usuario_mysql"
 dotnet user-secrets set "password" "sua_senha_mysql"
 dotnet user-secrets set "Port" "3306"
@@ -61,7 +61,7 @@ dotnet user-secrets set "Port" "3306"
 
 | Chave | Descrição |
 |-------|-----------|
-| `database` | Nome do banco de dados MySQL |
+| **`database`** | **Nome do banco MySQL** (neste projeto o exemplo é **`escola`** — deve ser idêntico ao `CREATE DATABASE`). |
 | `user` | Usuário MySQL |
 | `password` | Senha do usuário |
 | `Port` | Porta (opcional; se omitida, o código usa `3306`) |
@@ -85,8 +85,8 @@ Ou abra a solução `cpll.sln` no Visual Studio e execute (F5).
 
 ## Resumo rápido
 
-1. Crie o banco e a tabela `alunos` no MySQL.  
-2. Configure `database`, `user`, `password` e opcionalmente `Port` com `dotnet user-secrets set`.  
+1. Crie o banco **`escola`** e a tabela **`alunos`** no MySQL.  
+2. Defina o nome do banco nos secrets: `dotnet user-secrets set "database" "escola"` (e `user`, `password`, opcionalmente `Port`).  
 3. Execute `dotnet run`.
 
-Se a conexão falhar, confira se o MySQL está ativo, se o banco existe e se usuário/senha/porta estão corretos.
+Se a conexão falhar, confira se o MySQL está ativo, se o banco **`escola`** existe e se o valor de **`database`** nos secrets é exatamente esse nome.
